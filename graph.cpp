@@ -2,9 +2,34 @@
 #include <QQueue>
 
 //Getting our grid size [N*N]
-Graph::Graph(size_t rows, size_t columns) : rows_(rows), columns_(columns)
+Graph::Graph(size_t rectSize, size_t rows, size_t columns, QWidget* parent)
+    :  QGraphicsView(parent), rectSize_(rectSize), rows_(rows), columns_(columns)
 {
     vertices_ = rows_ * columns_;
+
+    int width = rectSize * columns;
+    int height = rectSize * rows;
+
+    scene = new QGraphicsScene();
+    this->setScene(scene);
+
+
+    for (int i=0; i < height; i+=rectSize)
+    {
+        for (int j=0; j < width; j+=rectSize)
+        {
+            Node *item = new Node(j,i);
+            this->addNode(item);
+            scene->addItem(item);
+        }
+    }
+
+
+}
+
+Graph::~Graph()
+{
+
 }
 
 void Graph::addNode(Node* someNode)
@@ -54,8 +79,10 @@ void Graph::makeGrid()
 
 
 // breadth-first search
-void Graph::BFS(int startingNode, int targetNode)
+void Graph::BFS()
 {
+    int startingNode = startingNode_;
+    int targetNode = targetNode_;
     nodeVector_.at(startingNode)->setAsStart();
     nodeVector_.at(targetNode)->setAsEnd();
     nodeVector_.at(startingNode)->setStep(0);
@@ -77,39 +104,50 @@ void Graph::BFS(int startingNode, int targetNode)
 
         //Getting current vertex adjacent list
         QList<int> currentNodeAdjList = nodeVector_.at(current)->getAdjList();
+#ifdef DEBUG
         cout << "Checking adj list for vertex " << current << endl;
+#endif
         for (auto i = currentNodeAdjList.begin(); i!= currentNodeAdjList.end(); ++i )
         {
 
             if (*i == targetNode)
             {
+                #ifdef DEBUG
                 cout << "We found target Node!! It's connected with " << current << endl;
+                #endif
                 nodeVector_.at(*i)->setStep(nodeVector_.at(current)->getStep() + 1);
+                #ifdef DEBUG
                 cout << "Can get here by " << nodeVector_.at(*i)->getStep() << " steps!" << endl;
-                QList <int> path = this->pathfinding(targetNode);
+                #endif
+                QList <int> path = this->pathfinding();
+                #ifdef DEBUG
                 this->showpath(path);
+                #endif
                 return;
             }
             if (!visited[*i])
             {
                 // Setting how many step it takes to get to that node
                 nodeVector_.at(*i)->setStep(nodeVector_.at(current)->getStep() + 1);
+                #ifdef DEBUG
                 cout << "Amount steps to " << nodeVector_.at(*i)->getId() << " : " << nodeVector_.at(*i)->getStep() << endl;
                 cout << "Visit and enqueue " << *i << endl;
+                #endif
                 visited[*i] = true;
                 nodeVector_.at(*i)->setVisited();
                 queue.enqueue(*i);
             }
         }
     }
+    #ifdef DEBUG
     cout << "Sorry! Can't find a path to node!" << endl;
-
+    #endif
 }
 
 
-QList<int> Graph::pathfinding(int targetNode)
+QList<int> Graph::pathfinding()
 {
-    int currentNode = targetNode;
+    int currentNode = targetNode_;
     QList<int> path;
     while (nodeVector_.at(currentNode)->getStep() != 0)
     {
@@ -141,7 +179,7 @@ QList<int> Graph::pathfinding(int targetNode)
         this->nodeVector_.at(nextstep)->setAsPath();
     }
 
-    path.push_back(targetNode);
+    path.push_back(targetNode_);
 
     return path;
 }
