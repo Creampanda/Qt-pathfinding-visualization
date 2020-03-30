@@ -1,6 +1,6 @@
 #include "graph.h"
 #include <QQueue>
-
+#define DEBUG
 //Getting our grid size [N*N]
 Graph::Graph(size_t rectSize, size_t rows, size_t columns, QWidget* parent)
     :  QGraphicsView(parent), rectSize_(rectSize), rows_(rows), columns_(columns)
@@ -24,7 +24,7 @@ Graph::Graph(size_t rectSize, size_t rows, size_t columns, QWidget* parent)
         }
     }
 
-
+    makeGrid();
 }
 
 Graph::~Graph()
@@ -204,4 +204,25 @@ void Graph::disableNode(int nodeId)
     }
 
     nodeVector_.at(nodeId)->getAdjListRef().clear();
+}
+
+void Graph::slotClearAll()
+{
+    for(auto node : nodeVector_)
+    {
+        node->Pressed = false;
+        node->startingNode = false;
+        node->targetNode = false;
+        node->Visited = false;
+        node->pathNode = false;
+    }
+    makeGrid();
+    update();
+}
+
+#include <QMessageBox>
+void Graph::slotBFS()
+{
+    QMessageBox::information(this,"Title","sfasfA");
+    BFS();
 }

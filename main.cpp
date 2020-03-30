@@ -1,6 +1,6 @@
 #include <QtWidgets>
 #include "mainwindow.h"
-
+#define DEBUG
 int Node::idGenerator_ = 0;
 
 

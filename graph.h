@@ -33,12 +33,20 @@ public:
     int startingNode_ = 0;
     int targetNode_ = 0;
 
+
     void BFS();
 
     QList<int> pathfinding();
     void showpath(QList<int> path);
 
     void disableNode(int node);
+
+private slots:
+
+    void slotClearAll();
+
+    void slotBFS();
+
 
 };
 

@@ -14,11 +14,7 @@ class Node: public QGraphicsItem
     int x_ = 0;
     int y_ = 0;
     int size_ = 25;
-    bool Pressed = false;
-    bool startingNode = false;
-    bool targetNode = false;
-    bool Visited = false;
-    bool pathNode = false;
+
     //Unique vertex ID generator
     static int idGenerator_;
     //Vertex ID
@@ -46,6 +42,7 @@ public:
     void showNode();
 
     void setStep(int step);
+
     int getStep();
 
     QList<int> getAdjList();
@@ -53,6 +50,11 @@ public:
     QList<int> & getAdjListRef();
 
     int getId();
+    bool Pressed = false;
+    bool startingNode = false;
+    bool targetNode = false;
+    bool Visited = false;
+    bool pathNode = false;
 
     void setAsStart();
     void setAsEnd();

@@ -17,10 +17,10 @@ QRectF Node::boundingRect() const
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QBrush brush(Qt::white);
+    QBrush brush(Qt::black);
     if (Pressed)
     {
-        brush.setColor(Qt::yellow);
+        brush.setColor(Qt::black);
     } else if (startingNode)
     {
         brush.setColor(Qt::red);
@@ -39,11 +39,14 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     }
     painter->fillRect(boundingRect(),brush);
     painter->drawRect(boundingRect());
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Pressed = !Pressed;
+
     update();
     QGraphicsItem::mousePressEvent(event);
 }
