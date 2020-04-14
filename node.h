@@ -4,13 +4,15 @@
 #include <QList>
 #include <iostream>
 #include <QVector>
+#include <QObject>
 
 using std::cout;
 using std::endl;
 
 
-class Node: public QGraphicsItem
+class Node: public QObject, public QGraphicsItem
 {
+    Q_OBJECT
     int x_ = 0;
     int y_ = 0;
     int size_ = 25;
@@ -23,6 +25,7 @@ class Node: public QGraphicsItem
     QList <int> adjList_;
     // Steps from starting node
     int steps_ = -1;
+
 
 protected:
     void paint(QPainter * painter,
@@ -60,5 +63,8 @@ public:
     void setAsEnd();
     void setVisited();
     void setAsPath();
+signals:
+    void signalDisableNode(int id);
+    void signalEnableNode(int id);
 };
 #endif // NODE_H

@@ -16,10 +16,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private slots:
-    void createNewGraph();
+    //void createNewGraph();
 
 private:
     Ui::MainWindow *ui;
+    QGraphicsView* view;
     Graph *myGraph;
 };
 #endif // MAINWINDOW_H

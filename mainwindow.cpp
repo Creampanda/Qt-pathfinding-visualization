@@ -16,17 +16,20 @@ MainWindow::MainWindow(QWidget *parent)
     int rows = 20;
     int columns = 20;
 
-    QPushButton* clearBtn = new QPushButton("Очистить поле");
+   //QPushButton* clearBtn = new QPushButton("Очистить поле");
     QPushButton* bfsBtn = new QPushButton("BFS");
 
     myGraph = new Graph(rectSize,rows,columns);
 
-    connect(clearBtn, SIGNAL(clicked()), this, SLOT(newGraph));
+    view = new QGraphicsView(this);
+    view->setScene(myGraph);
+
+    //connect(clearBtn, SIGNAL(clicked()), this, SLOT(newGraph));
     connect(bfsBtn, SIGNAL(clicked()), myGraph, SLOT(slotBFS()));
 
     QVBoxLayout* vboxlayout = new QVBoxLayout();
-    vboxlayout->addWidget(myGraph);
-    vboxlayout->addWidget(clearBtn);
+    vboxlayout->addWidget(view);
+   // vboxlayout->addWidget(clearBtn);
     vboxlayout->addWidget(bfsBtn);
 
     myGraph->startingNode_ = 30;

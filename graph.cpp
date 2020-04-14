@@ -3,16 +3,12 @@
 #define DEBUG
 //Getting our grid size [N*N]
 Graph::Graph(size_t rectSize, size_t rows, size_t columns, QWidget* parent)
-    :  QGraphicsView(parent), rectSize_(rectSize), rows_(rows), columns_(columns)
+    :  QGraphicsScene(parent), rectSize_(rectSize), rows_(rows), columns_(columns)
 {
     vertices_ = rows_ * columns_;
 
     int width = rectSize * columns;
     int height = rectSize * rows;
-
-    scene = new QGraphicsScene();
-    this->setScene(scene);
-
 
     for (int i=0; i < height; i+=rectSize)
     {
@@ -20,10 +16,12 @@ Graph::Graph(size_t rectSize, size_t rows, size_t columns, QWidget* parent)
         {
             Node *item = new Node(j,i);
             this->addNode(item);
-            scene->addItem(item);
+            this->addItem(item);
+            connect(item,&Node::signalDisableNode,this,&Graph::slotDisableNode);
+
+            connect(item,&Node::signalEnableNode,this,&Graph::slotEnableNode);
         }
     }
-
     makeGrid();
 }
 
@@ -135,6 +133,8 @@ void Graph::BFS()
                 #endif
                 visited[*i] = true;
                 nodeVector_.at(*i)->setVisited();
+
+                this->advance();
                 queue.enqueue(*i);
             }
         }
@@ -196,7 +196,7 @@ void Graph::showpath(QList<int> path)
     cout << endl;
 }
 
-void Graph::disableNode(int nodeId)
+void Graph::slotDisableNode(int nodeId)
 {
     for (auto i = nodeVector_.at(nodeId)->getAdjListRef().begin(); i != nodeVector_.at(nodeId)->getAdjListRef().end(); i++)
     {
@@ -204,6 +204,32 @@ void Graph::disableNode(int nodeId)
     }
 
     nodeVector_.at(nodeId)->getAdjListRef().clear();
+}
+
+void Graph::slotEnableNode(int node)
+{
+    if (node % columns_ == 0)
+    {
+        connectNodes(node, node + 1);
+    } else if (node % columns_ == columns_ - 1)
+    {
+        connectNodes(node, node - 1);
+    } else
+    {
+        connectNodes(node, node + 1);
+        connectNodes(node, node - 1);
+    }
+    if (node < (int) columns_)
+    {
+        connectNodes(node, node + columns_);
+    } else if (node + columns_ > vertices_)
+    {
+        connectNodes(node,node - columns_);
+    } else
+    {
+        connectNodes(node, node + columns_);
+        connectNodes(node,node - columns_);
+    }
 }
 
 void Graph::slotClearAll()
@@ -223,6 +249,6 @@ void Graph::slotClearAll()
 #include <QMessageBox>
 void Graph::slotBFS()
 {
-    QMessageBox::information(this,"Title","sfasfA");
+    //QMessageBox::information(this,"Title","sfasfA");
     BFS();
 }

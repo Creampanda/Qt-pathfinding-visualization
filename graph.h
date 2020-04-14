@@ -5,7 +5,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
-class Graph : public QGraphicsView{
+class Graph : public QGraphicsScene{
     Q_OBJECT
 private:
     size_t rectSize_;
@@ -14,7 +14,6 @@ private:
     size_t vertices_ = 0;
     //Storing all vertices
     QVector <Node*> nodeVector_;
-    QGraphicsScene *scene;
 public:
 
     Graph(size_t rectSize,size_t rows, size_t columns, QWidget* parent = 0);
@@ -39,7 +38,7 @@ public:
     QList<int> pathfinding();
     void showpath(QList<int> path);
 
-    void disableNode(int node);
+
 
 private slots:
 
@@ -47,6 +46,9 @@ private slots:
 
     void slotBFS();
 
+    void slotDisableNode(int node);
+
+    void slotEnableNode(int node);
 
 };
 

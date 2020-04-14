@@ -45,10 +45,16 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (Pressed)
+    {
+        emit signalEnableNode(this->id_);
+    } else
+    {
+        emit signalDisableNode(this->id_);
+    }
     Pressed = !Pressed;
-
     update();
-    QGraphicsItem::mousePressEvent(event);
+    Q_UNUSED(event);
 }
 
 // Connect current node with other
@@ -94,16 +100,22 @@ int Node::getId() { return id_; }
 void Node::setAsStart()
 {
     this->startingNode = true;
+
+    update();
 };
 
 void Node::setAsEnd()
 {
     this->targetNode = true;
+
+    update();
 }
 
 void Node::setVisited()
 {
     this->Visited = true;
+
+    update();
 }
 
 void Node::setAsPath()
