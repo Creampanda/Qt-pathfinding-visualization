@@ -17,9 +17,7 @@ Graph::Graph(size_t rectSize, size_t rows, size_t columns, QWidget* parent)
             Node *item = new Node(j,i);
             this->addNode(item);
             this->addItem(item);
-            connect(item,&Node::signalDisableNode,this,&Graph::slotDisableNode);
-
-            connect(item,&Node::signalEnableNode,this,&Graph::slotEnableNode);
+            connect(item,&Node::signalWasClicked,this,&Graph::slotClickHandler);
         }
     }
     makeGrid();
@@ -79,10 +77,10 @@ void Graph::makeGrid()
 // breadth-first search
 void Graph::BFS()
 {
+    slotClearBeforeBFS();
     int startingNode = startingNode_;
     int targetNode = targetNode_;
-    nodeVector_.at(startingNode)->setAsStart();
-    nodeVector_.at(targetNode)->setAsEnd();
+    update();
     nodeVector_.at(startingNode)->setStep(0);
     //Bool array for visited vertices
     bool* visited = new bool[vertices_];
@@ -196,6 +194,25 @@ void Graph::showpath(QList<int> path)
     cout << endl;
 }
 
+bool Graph::getStartFlag()
+{
+    return startFlag_;
+}
+
+void Graph::setStartFlag(bool flag)
+{
+    startFlag_ = flag;
+}
+bool Graph::getTargetFlag()
+{
+    return targetFlag_;
+}
+
+void Graph::setTargetFlag(bool flag)
+{
+    targetFlag_ = flag;
+}
+
 void Graph::slotDisableNode(int nodeId)
 {
     for (auto i = nodeVector_.at(nodeId)->getAdjListRef().begin(); i != nodeVector_.at(nodeId)->getAdjListRef().end(); i++)
@@ -232,23 +249,69 @@ void Graph::slotEnableNode(int node)
     }
 }
 
+void Graph::slotSetStart(int node)
+{
+    startingNode_ = node;
+}
+
+void Graph::slotSetTarget(int node)
+{
+    targetNode_ = node;
+}
+
+void Graph::slotClickHandler(int node)
+{
+    if (startFlag_)
+    {
+       if(startingNode_ >= 0) nodeVector_.at(startingNode_)->startingNode = false;
+       startingNode_ = node;
+       nodeVector_.at(node)->setAsStart();
+       update();
+    }
+    else if (targetFlag_)
+    {
+        if(targetNode_ >= 0)nodeVector_.at(targetNode_)->targetNode = false;
+        targetNode_ = node;
+        nodeVector_.at(node)->setAsEnd();
+        update();
+    } else if(nodeVector_.at(node)->Pressed)
+    {
+        slotEnableNode(node);
+        nodeVector_.at(node)->Pressed = 0;
+    } else if (!nodeVector_.at(node)->Pressed)
+    {
+        slotDisableNode(node);
+        nodeVector_.at(node)->Pressed = 1;
+    }
+}
+
 void Graph::slotClearAll()
 {
     for(auto node : nodeVector_)
     {
-        node->Pressed = false;
-        node->startingNode = false;
-        node->targetNode = false;
-        node->Visited = false;
-        node->pathNode = false;
+        node->resetAll();
     }
     makeGrid();
+    startingNode_ = -1;
+    targetNode_ = -1;
+    update();
+}
+
+void Graph::slotClearBeforeBFS()
+{
+    for(auto node : nodeVector_)
+    {
+        node->resetBeforeBFS();
+    }
+
     update();
 }
 
 #include <QMessageBox>
 void Graph::slotBFS()
 {
-    //QMessageBox::information(this,"Title","sfasfA");
-    BFS();
+    if (startingNode_ >= 0 && targetNode_ >= 0)
+        BFS();
+    else
+        emit signalWarningBfs("You should select start and end!");
 }

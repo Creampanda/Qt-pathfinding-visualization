@@ -45,7 +45,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (Pressed)
+    /* if (Pressed)
     {
         emit signalEnableNode(this->id_);
     } else
@@ -53,7 +53,8 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
         emit signalDisableNode(this->id_);
     }
     Pressed = !Pressed;
-    update();
+    update();*/
+    emit signalWasClicked(id_);
     Q_UNUSED(event);
 }
 
@@ -122,4 +123,21 @@ void Node::setAsPath()
 {
     this->pathNode = true;
     update();
+}
+
+void Node::resetAll()
+{
+    this->Pressed = false;
+    this->startingNode = false;
+    this->targetNode = false;
+    this->Visited = false;
+    this->pathNode = false;
+    this->steps_ = -1;
+}
+
+void Node::resetBeforeBFS()
+{
+    this->Visited = false;
+    this->pathNode = false;
+    this->steps_ = -1;
 };

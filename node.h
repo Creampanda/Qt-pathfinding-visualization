@@ -63,8 +63,15 @@ public:
     void setAsEnd();
     void setVisited();
     void setAsPath();
+
+    void resetAll();
+    void resetBeforeBFS();
 signals:
+    void signalWasClicked(int id);
     void signalDisableNode(int id);
     void signalEnableNode(int id);
+
+    void signalSetStart(int id);
+    void signalSetTarget(int id);
 };
 #endif // NODE_H

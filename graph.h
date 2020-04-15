@@ -14,6 +14,11 @@ private:
     size_t vertices_ = 0;
     //Storing all vertices
     QVector <Node*> nodeVector_;
+    bool startFlag_ = false;
+    bool targetFlag_ = false;
+
+    int startingNode_ = -1;
+    int targetNode_ = -1;
 public:
 
     Graph(size_t rectSize,size_t rows, size_t columns, QWidget* parent = 0);
@@ -29,8 +34,6 @@ public:
 
     void makeGrid();
 
-    int startingNode_ = 0;
-    int targetNode_ = 0;
 
 
     void BFS();
@@ -38,17 +41,32 @@ public:
     QList<int> pathfinding();
     void showpath(QList<int> path);
 
+    bool getStartFlag();
+    void setStartFlag(bool flag);
 
+    bool getTargetFlag();
+    void setTargetFlag(bool flag);
 
 private slots:
 
     void slotClearAll();
+
+    void slotClearBeforeBFS();
 
     void slotBFS();
 
     void slotDisableNode(int node);
 
     void slotEnableNode(int node);
+
+    void slotSetStart(int node);
+
+    void slotSetTarget(int node);
+
+    void slotClickHandler(int node);
+
+signals:
+    void signalWarningBfs(QString text);
 
 };
 
