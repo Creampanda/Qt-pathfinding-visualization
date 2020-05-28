@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,12 +20,14 @@ SOURCES += \
     graph.cpp \
     main.cpp \
     mainwindow.cpp \
-    node.cpp
+    node.cpp \
+    test_node.cpp
 
 HEADERS += \
     graph.h \
     mainwindow.h \
-    node.h
+    node.h \
+    test_node.h
 
 FORMS += \
     mainwindow.ui
@@ -33,3 +36,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    uml_pathfinding.qmodel

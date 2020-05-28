@@ -1,5 +1,9 @@
 #include "graph.h"
 #include <QQueue>
+#include <QFile>
+#include <QTextStream>
+#include <string>
+#include <QFileDialog>
 #define DEBUG
 //Getting our grid size [N*N]
 Graph::Graph(size_t rectSize, size_t rows, size_t columns, QWidget* parent)
@@ -283,6 +287,82 @@ void Graph::slotClickHandler(int node)
         slotDisableNode(node);
         nodeVector_.at(node)->Pressed = 1;
     }
+}
+
+void Graph::slotSaveGraph()
+{
+    QString strFilter;
+    QString str =
+            QFileDialog::getSaveFileName(0,tr("Save graph"),"*.txt",strFilter);
+
+
+    QFile file(str);
+
+    file.open(QFile::WriteOnly);
+   /* if (!str.isEmpty())
+    {
+        if (strFilter.contains("txt"))
+        {
+        }
+    }*/
+
+
+    QTextStream out(&file);
+
+    out << 777 << endl;
+
+    for (auto x : nodeVector_)
+    {
+        int id = x->getId();
+        if (x->targetNode) out << 2 << " " << id << endl;
+        else if (x->Pressed) out << 0 << " " << id << endl;
+        else if (x->startingNode) out << 1 << " " << id << endl;
+    }
+    out << 777 << " " << 777 << endl;
+    file.close();
+}
+
+void Graph::slotLoadGraph()
+{
+    QString strFilter;
+    QString str =
+            QFileDialog::getOpenFileName(0,tr("Save graph"),"*.txt",strFilter);
+
+
+    QFile file(str);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream in(&file);
+    int a,b;
+    in >> a;
+    if (a != 777)
+    {
+        file.close();
+        return;
+    }
+
+    this->slotClearAll();
+    while(1) {
+        in >> a >> b;
+        if (a == 777 && b == 777) break;
+        if(in.status() != QTextStream::Ok) break;
+        switch (a)
+        {
+            case 0:
+                nodeVector_[b]->Pressed = 1;
+                slotDisableNode(b);
+                break;
+            case 1:
+                nodeVector_[b]->setAsStart();
+                slotSetStart(b);
+                break;
+            case 2:
+                nodeVector_[b]->setAsEnd();
+                slotSetTarget(b);
+                break;
+        }
+    }
+    update();
+    file.close();
 }
 
 void Graph::slotClearAll()

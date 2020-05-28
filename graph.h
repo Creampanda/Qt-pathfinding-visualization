@@ -19,6 +19,8 @@ private:
 
     int startingNode_ = -1;
     int targetNode_ = -1;
+    QString saveFile_ = "F:/MyProjects/CPP/BFS/BFS/testfile.txt";
+    QString loadFile_ = "F:/MyProjects/CPP/BFS/BFS/testfile.txt";
 public:
 
     Graph(size_t rectSize,size_t rows, size_t columns, QWidget* parent = 0);
@@ -64,6 +66,9 @@ private slots:
     void slotSetTarget(int node);
 
     void slotClickHandler(int node);
+
+    void slotSaveGraph();
+    void slotLoadGraph();
 
 signals:
     void signalWarningBfs(QString text);
